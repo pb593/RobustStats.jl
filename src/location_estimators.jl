@@ -16,7 +16,7 @@ then the data median will be used.
 The answer is found iteratively, revised until it changes by less than `tol`.  If
 `tol` is omitted, then `tol` will use 1e-5 times the median absolute
 deviation of `x` about its median."""
-function bisquareWM{T <: Real}(x::AbstractArray{T}, k::Real, center::Real, tol::Real)
+function bisquareWM(x::AbstractArray{T}, k::Real, center::Real, tol::Real) where {T <: Real}
     for _iteration in 1:100
         weights = (1.0-((x-center)/k).^2).^2
         weights[abs.(x-center).>k] = 0.0
@@ -30,9 +30,9 @@ function bisquareWM{T <: Real}(x::AbstractArray{T}, k::Real, center::Real, tol::
 end
 
 
-bisquareWM{T<:Real}(x::AbstractArray{T}, k::Real, center::Real) =
+bisquareWM(x::AbstractArray{T}, k::Real, center::Real) where {T<:Real} =
         bisquareWM(x, k, center, 1e-5*StatsBase.mad(float(x)))
-bisquareWM{T<:Real}(x::AbstractArray{T}, k::Real) = bisquareWM(x, k, median(x))
+bisquareWM(x::AbstractArray{T}, k::Real) where {T<:Real} = bisquareWM(x, k, median(x))
 
 
 """huberWM(x, k, center, tol)`
@@ -51,10 +51,10 @@ If `center` is None, then the data median will be used.
 The answer is found iteratively, revised until it changes by less than `tol`.  If
 `tol` is None (the default), then `tol` will use 1e-5 times the median absolute
 deviation of `x` about its median."""
-function huberWM{T <: Real}(x::AbstractArray{T}, k::Real, center::Real, tol::Real)
+function huberWM(x::AbstractArray{T}, k::Real, center::Real, tol::Real) where {T <: Real}
     for _iteration = 1:100
         weights = float(k)./abs.(x-center)
-        weights[weights.>1.0] = 1.0
+        weights[weights .> 1.0] = 1.0
         newcenter = dot(weights, x)/sum(weights)
         if abs(newcenter - center) < tol
             return newcenter
@@ -64,9 +64,9 @@ function huberWM{T <: Real}(x::AbstractArray{T}, k::Real, center::Real, tol::Rea
     error("huberWM used too many iterations.\nConsider using higher `tol` or better `center`, or change to trimean(x).")
 end
 
-huberWM{T<:Real}(x::AbstractArray{T}, k::Real, center::Real) =
+huberWM(x::AbstractArray{T}, k::Real, center::Real) where {T<:Real} =
         huberWM(x, k, center, 1e-5*StatsBase.mad(float(x)))
-huberWM{T<:Real}(x::AbstractArray{T}, k::Real) = huberWM(x, k, median(x))
+huberWM(x::AbstractArray{T}, k::Real) where {T<:Real} = huberWM(x, k, median(x))
 
 
 

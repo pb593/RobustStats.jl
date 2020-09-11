@@ -89,7 +89,7 @@ Compute the weighted high median in O(N) time.
 
 Note that both input arrays will be changed (not merely re-ordered) by this function.
 """
-function _weightedhighmedian!{T <: Integer}(a::AbstractArray, wts::AbstractArray{T})
+function _weightedhighmedian!(a::AbstractArray, wts::AbstractArray{T}) where {T <: Integer}
     const N = length(a)
     N != length(wts) && throw(ArgumentError("_weightedhighmedian!(a,w) requires length(a)==length(w)"))
 
@@ -159,7 +159,7 @@ is strictly greater than half of the total weight.
 
 `x`    - Array containing the observations (unsorted)
 `wts`  - Weights."""
-_weightedhighmedian{T <: Integer}(x::AbstractArray, wts::AbstractArray{T}) =
+_weightedhighmedian(x::AbstractArray, wts::AbstractArray{T}) where {T <: Integer} =
     _weightedhighmedian!(copy(x), copy(wts))
 
 
