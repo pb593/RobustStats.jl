@@ -149,7 +149,7 @@ function idealf(x::AbstractArray{S}) where {S <: Real}
     j       = floor(Int64, n/4+5/12) # 25%ile is in [y[j], y[j+1]]
     k       = n-j+1        # 75%ile is in [y[k],y[k-1]]
     g       = n/4+5/12 - j   # weighting for the two data surrounding quartiles.
-    (1-g).*y[j]+g.*y[j+1], (1-g).*y[k]+g.*y[k-1]
+    (1-g) .* y[j]+g .* y[j+1], (1-g) .* y[k]+g .* y[k-1]
 end
 
 """`pbvar(x; beta=0.2)`
@@ -200,7 +200,7 @@ function bivar(x::AbstractArray{S}) where {S <: Real}
     q = Rmath.qnorm(0.75)
     top = bot = 0.0
     for i = 1:n
-        u = abs(x[i]-med)./(9.*q.*MAD)
+        u = abs(x[i]-med) ./ (9 .* q .* MAD)
         if u<1.0
             top += n*(x[i]-med)*(x[i]-med)*(1-u*u).^4
             bot += (1-u*u)*(1-5*u*u)
@@ -354,16 +354,16 @@ function binomci(s::Int, n::Int; alpha::Real=0.05)
 
     z     = Rmath.qnorm(1-alpha/2)
     A     = ((s+1)/(n-s))*((s+1)/(n-s))
-    B     = 81.*(s+1)*(n-s)-9.*n-8
+    B     = 81 .* (s+1)*(n-s)-9 .* n-8
     C     = (0-3)*z*sqrt(9.*(s+1)*(n-s)*(9*n+5-z^2)+n+1)
-    D     = 81.*(s+1)^2-9.*(s+1)*(2+z^2)+1
+    D     = 81 .* (s+1)^2-9 .* (s+1)*(2+z^2)+1
     E     = 1+A*((B+C)/D)^3
     upper = 1/E
 
     A     = (s/(n-s-1))*(s/(n-s-1))
-    B     = 81.*s*(n-s-1)-9.*n-8
-    C     = 3.*z*sqrt(9.*s*(n-s-1)*(9.*n+5-z^2)+n+1)
-    D     = 81.*s^2-9.*s*(2+z^2)+1
+    B     = 81 .* s*(n-s-1)-9 .* n-8
+    C     = 3 .* z*sqrt(9 .* s*(n-s-1)*(9 .* n+5-z^2)+n+1)
+    D     = 81 .* s^2-9 .* s*(2+z^2)+1
     E     = 1+A*((B+C)/D)^3
     lower = 1/E
     binomciOutput(p_hat, [lower, upper], n)
@@ -450,7 +450,7 @@ function _estimate_dispersion(x::AbstractArray{S}) where {S <: Real}
     m = iqrn(x)
     m > 0 && return m
 
-    m =  sqrt(winvar(x)./0.4129)
+    m =  sqrt(winvar(x) ./ 0.4129)
     m > 0 && return m
 
     error("All measures of dispersion are equal to 0")
@@ -800,7 +800,7 @@ function pbos(x::AbstractArray{S}; beta::Real=0.2) where {S <: Real}
     nval    = length( x )
     omhatid::Integer = floor( (1 - beta)*nval )
     omhatx  = temp[ omhatid ]
-    psi     = ( x - median(x) )./ omhatx
+    psi     = ( x - median(x) ) ./ omhatx
     i1      = length(psi[ psi .< -1 ])
     i2      = length(psi[ psi .> 1 ])
     sx      = 0.0
@@ -821,8 +821,8 @@ function pbcor(x::AbstractArray{S}, y::AbstractArray{T}; beta::Real=0.2) where {
     omhatx  = temp[ omhatid ]
     temp    = sort( abs.( y - median(y) ))
     omhaty  = temp[ omhatid ]
-    a       = (x .- pbos(x, beta=beta) )./omhatx
-    b       = (y .- pbos(y, beta=beta) )./omhaty
+    a       = (x .- pbos(x, beta=beta) ) ./ omhatx
+    b       = (y .- pbos(y, beta=beta) ) ./ omhaty
     for i = 1:nval
         if a[i] < -1
             a[i] = -1
@@ -835,7 +835,7 @@ function pbcor(x::AbstractArray{S}, y::AbstractArray{T}; beta::Real=0.2) where {
             b[i] = 1
         end
     end
-    Pbcor   = sum( a.*b )/sqrt(sum( a.*a ) * sum( b.*b ))
+    Pbcor   = sum( a .* b )/sqrt(sum( a .* a ) * sum( b .* b ))
     test    = Pbcor*sqrt( ( nval - 2 )/( 1 - Pbcor*Pbcor ) )
     sig     = 2*( 1 - Rmath.pt(abs(test), nval-2))
 
