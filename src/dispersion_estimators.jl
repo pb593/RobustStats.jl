@@ -22,9 +22,9 @@ undesirable property that their asymptotic standard deviation improves only as
 N^(-1/3) rather than the more usual N^(-1/2).
 """
 function shorthrange_and_location!(x::AbstractArray, normalize::Bool=false)
-    const N = length(x)
-    const nhalves = div(N+1, 2) # Number of minimal intervals (containing at least half the data)
-    const nobs = 1 + div(N, 2)  # Number of values in each minimal interval
+    N = length(x)
+    nhalves = div(N+1, 2) # Number of minimal intervals (containing at least half the data)
+    nobs = 1 + div(N, 2)  # Number of values in each minimal interval
 
     sort!(x)
 
@@ -90,7 +90,7 @@ Compute the weighted high median in O(N) time.
 Note that both input arrays will be changed (not merely re-ordered) by this function.
 """
 function _weightedhighmedian!(a::AbstractArray, wts::AbstractArray{T}) where {T <: Integer}
-    const N = length(a)
+    N = length(a)
     N != length(wts) && throw(ArgumentError("_weightedhighmedian!(a,w) requires length(a)==length(w)"))
 
     wtotal::Int64 = 0
@@ -170,7 +170,7 @@ Compute the scaleQ statistic using a simple, O(N^2) routine.
 WARNING! This is only for validating the faster scaleQ(), which runs in O(N log N).
 """
 function _slow_scaleQ(x::AbstractArray)
-    const N = length(x)
+    N = length(x)
     NMAX = 1000
     N > NMAX && throw(ArgumentError("_slow_scaleQ(x) requires length(x)<=$(NMAX), because it is slow"))
 
@@ -211,7 +211,7 @@ This version calls sort!(y) on the input array but does not otherwise change it.
 # reference FORTRAN line numbers in that publication.
 function scaleQ!(y::AbstractArray)
     sort!(y)
-    const N = length(y)
+    N = length(y)
 
     h = div(N, 2)+1
     k = div(h*(h-1), 2)
@@ -316,7 +316,7 @@ Compute the scaleS statistic using a simple, O(N^2) routine.
 WARNING! This is only for validating the faster scaleS(), which runs in O(N log N).
 """
 function _slow_scaleS!(x::AbstractArray)
-    const N = length(x)
+    N = length(x)
     NMAX = 1000
     N > NMAX && throw(ArgumentError("_slow_scaleS(x) requires length(x)<=$(NMAX), because it is slow"))
 
@@ -347,7 +347,7 @@ Compute the scale-S statistic of Rousseeuw and Croux fast. See `scaleS(x)`
 This version calls sort!(x) on the input array but does not otherwise change it.
 """
 function scaleS!(x::AbstractArray)
-    const N = length(x)
+    N = length(x)
     lomed(x::Vector) = select!(x, div(length(x)+1, 2))
     # himed(x::Vector) = select!(x, div(length(x), 2)+1)
 
