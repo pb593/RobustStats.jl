@@ -17,7 +17,7 @@ Trimmed mean of real-valued array `x`, which sorts the vector `x` in place.
 Find the mean of `x`, omitting the lowest and highest `tr` fraction of the data.
 This requires `0 <= tr <= 0.5`. The trimming fraction defaults to `tr=0.2`.
 """
-function tmean!{S <: Real}(x::AbstractArray{S}; tr::Real=0.2)
+function tmean!(x::AbstractArray{S}; tr::Real=0.2) where {S <: Real}
     if tr < 0 || tr > 0.5
         error("tr cannot be smaller than 0 or larger than 0.5")
     elseif tr == 0
@@ -41,7 +41,7 @@ Return a copy of `x` in which extreme values (that is, the lowest and highest
 fraction `tr` of the data) are replaced by the lowest or highest non-extreme
 value, as appropriate. The trimming fraction defaults to `tr=0.2`.
 """
-function winval{S <: Real}(x::AbstractArray{S}; tr::Real=0.2)
+function winval(x::AbstractArray{S}; tr::Real=0.2) where {S <: Real}
     const n = length(x)
     xcopy   = sort(x)
     ibot    = floor(Int64, tr*n)+1
@@ -56,7 +56,7 @@ Winsorized mean of real-valued array `x`.
 
 See `winval` for what Winsorizing (clipping) signifies.
 """
-winmean{S <: Real}(x::AbstractArray{S}; tr=0.2) = mean(winval(x, tr=tr))
+winmean(x::AbstractArray{S}; tr=0.2) where {S <: Real} = mean(winval(x, tr=tr))
 
 """`winvar(x; tr=0.2)`
 
@@ -64,7 +64,7 @@ Winsorized variance of real-valued array `x`.
 
 See `winval` for what Winsorizing (clipping) signifies.
 """
-winvar{S <: Real}(x::AbstractArray{S}; tr=0.2) = var(winval(x, tr=tr))
+winvar(x::AbstractArray{S}; tr=0.2) where {S <: Real} = var(winval(x, tr=tr))
 
 """`winstd(x; tr=0.2)`
 
@@ -72,7 +72,7 @@ Winsorized standard deviation of real-valued array `x`.
 
 See `winval` for what Winsorizing (clipping) signifies.
 """
-winstd{S <: Real}(x::AbstractArray{S}; tr=0.2) = std(winval(x, tr=tr))
+winstd(x::AbstractArray{S}; tr=0.2) where {S <: Real} = std(winval(x, tr=tr))
 
 
 """`wincov(x, y; tr=0.2)`
@@ -81,7 +81,9 @@ Compute the Winsorized covariance between `x` and `y`.
 
 See `winval` for what Winsorizing (clipping) signifies.
 """
-function wincov{S <: Real, T <: Real}(x::AbstractArray{S}, y::AbstractArray{T}; tr::Real=0.2)
+function wincov(x::AbstractArray{S}, y::AbstractArray{T}; tr::Real=0.2)
+    where {S <: Real, T <: Real}
+
     xvec = winval(x, tr=tr)
     yvec = winval(y, tr=tr)
     wcov = cov(xvec, yvec)
@@ -95,7 +97,7 @@ Estimated standard error of the mean for Winsorized real-valued array `x`.
 
 See `winval` for what Winsorizing (clipping) signifies.
 """
-trimse{S <: Real}(x::AbstractArray{S}; tr::Real=0.2) =
+trimse(x::AbstractArray{S}; tr::Real=0.2) where {S <: Real} =
     sqrt(winvar(x,tr=tr))/((1-2tr)*sqrt(length(x)))
 
 """`trimci(x; tr=0.2, alpha=0.05, ...)`
@@ -104,7 +106,9 @@ Compute a (1-α) confidence interval for the trimmed mean.
 
 Returns a `RobustStats.testOutput` object.
 """
-function trimci{S <: Real}(x::AbstractArray{S}; tr::Real=0.2, alpha::Real=0.05, nullvalue::Real=0, method=true)
+function trimci(x::AbstractArray{S}; tr::Real=0.2, alpha::Real=0.05, nullvalue::Real=0, method=true)
+    where {S <: Real}
+
     se  = trimse(x, tr=tr)
     n   = length(x)
     df::Int64   = n-2*floor(tr*n)-1
@@ -131,7 +135,7 @@ Compute the ideal fourths (interpolated quartiles) of real-valued array `x`.
 
 Returns a tuple of (1st_quartile, 3rd_quartile)
 """
-function idealf{S <: Real}(x::AbstractArray{S})
+function idealf(x::AbstractArray{S}) where {S <: Real}
     y       = sort(x)
     n       = length(x)
     j       = floor(Int64, n/4+5/12) # 25%ile is in [y[j], y[j+1]]
@@ -147,7 +151,7 @@ measure of scale (dispersion). Lower values of beta increase efficiency but redu
 robustness.
 This requires `0 <= beta <= 0.5`. The trimming fraction defaults to `beta=0.2`.
 """
-function pbvar{S <: Real}(x::AbstractArray{S}; beta::Real=0.2)
+function pbvar(x::AbstractArray{S}; beta::Real=0.2) where {S <: Real}
     const n = length(x)
     med = median(x)
     absdev = abs.(x-med)
@@ -181,7 +185,7 @@ measure of scale (dispersion). Lower values of beta increase efficiency but redu
 robustness.
 This requires `0 <= beta <= 0.5`. The trimming fraction defaults to `beta=0.2`.
 """
-function bivar{S <: Real}(x::AbstractArray{S})
+function bivar(x::AbstractArray{S}) where {S <: Real}
     const n = length(x)
     med = median(x)
     MAD = mad(x)
@@ -203,7 +207,7 @@ end
 Return the tau measure of location of real-valued array `x`, a robust, efficient
 estimator.
 """
-function tauloc{S <: Real}(x::AbstractArray{S}; cval::Real=4.5)
+function tauloc(x::AbstractArray{S}; cval::Real=4.5) where {S <: Real}
     const n = length(x)
     med = median(x)
     s = Rmath.qnorm(0.75)*mad(x)
@@ -225,7 +229,7 @@ end
 Return the tau measure of dispersion of real-valued array `x`, a robust, efficient
 estimator.
 """
-function tauvar{S <: Real}(x::AbstractArray{S}; cval::Real=3.0)
+function tauvar(x::AbstractArray{S}; cval::Real=3.0) where {S <: Real}
     const n = length(x)
     s     = Rmath.qnorm(0.75)*mad(x)
     tloc  = tauloc(x)
@@ -244,7 +248,9 @@ Use a modified boxplot rule based on the ideal fourths (`idealf`). When the name
 Returns an object with vectors `keepid` and `outid` giving the kept/rejected element numbers,
 `nout` (the number of rejected elements), and `outval`, an array of the outlier values.
 """
-function outbox{S <: Real}(x::AbstractArray{S}; mbox::Bool=false, gval::Real=NaN, method::Bool=true)
+function outbox(x::AbstractArray{S}; mbox::Bool=false, gval::Real=NaN, method::Bool=true)
+    where {S <: Real}
+
     const n = length(x)
     lower_quartile, upper_quartile = idealf(x)
     IQR = upper_quartile-lower_quartile
@@ -283,7 +289,7 @@ end
 
 Return the standard error of the median, computed through the method recommended
 by McKean and Sshrader (1984)."""
-function msmedse{S <: Real}(x::AbstractArray{S})
+function msmedse(x::AbstractArray{S}) where {S <: Real}
     const n = length(x)
     y = sort(x)
     if duplicated(y)
@@ -425,7 +431,7 @@ a non-zero dispersion. Each are normalized to 1.0 for Gaussian distributions:
 1. Normalized median absolute deviation `mad`,
 1. Normalized inter-quartile range `iqrn`,
 1. Normalized winsorized variance `winvar`."""
-function _estimate_dispersion{S <: Real}(x::AbstractArray{S})
+function _estimate_dispersion(x::AbstractArray{S}) where {S <: Real}
     m =  mad(x)
     m > 0 && return m
 
@@ -446,7 +452,9 @@ end
 Compute the (1-α) confidence interval for the median. In the second form,
 use the Hettmansperger and Sheather interpolation method to estimate a p-value
 for the `testmedian`."""
-function sint{S <: Real}(x::AbstractArray{S}; alpha::Real=0.05, method::Bool=true)
+function sint(x::AbstractArray{S}; alpha::Real=0.05, method::Bool=true)
+    where {S <: Real}
+
     const n = length(x)
     k = Int(Rmath.qbinom(alpha/2.0, n, 0.5))
     gk = Rmath.pbinom(n-k, n, .5) - Rmath.pbinom(k-1, n, .5)
@@ -479,8 +487,10 @@ function sint{S <: Real}(x::AbstractArray{S}; alpha::Real=0.05, method::Bool=tru
 end
 
 
-function sint{S <: Real}(x::AbstractArray{S}, testmedian;
+function sint(x::AbstractArray{S}, testmedian;
     alpha::Real=0.05, method::Bool=true)
+    where {S <: Real}
+
     ci = sint(x, alpha=alpha, method=false).ci
     med = median(x)
     cichoice = testmedian<med ? 1 : 2
@@ -530,7 +540,7 @@ end
 
 Evaluate Huber's ψ function for each value in the vector `x`.
 ψ(x) = max( min(x,bend), -bend)."""
-function hpsi{S <: Real}(x::AbstractArray{S}, bend::Real=1.28)
+function hpsi(x::AbstractArray{S}, bend::Real=1.28) where {S <: Real}
     ψ = Array(x)
     ψ[x .> bend] = bend
     ψ[x .< -bend] = -bend
@@ -541,7 +551,7 @@ end
 """`onestep(x, bend=1.28)`
 
 Compute one-step M-estimator of location using Huber's ψ."""
-function onestep{S <: Real}(x::AbstractArray{S}, bend::Real=1.28)
+function onestep(x::AbstractArray{S}, bend::Real=1.28) where {S <: Real}
     MED = median(x)
     MAD = mad(x)
     y = (x-MED)/MAD
@@ -556,8 +566,10 @@ Compute a (1-α) confidence interval for the location-estimator function `est`
 using a bootstrap calculation. The default estimator is `onestep`. If `nullvalue` is
 given, it is the target value used when computing a p-value.
 """
-function bootstrapci{S <: Real}(x::AbstractArray{S}; est::Function=onestep,
+function bootstrapci(x::AbstractArray{S}; est::Function=onestep,
     alpha::Real=0.05, nboot::Integer=2000, seed=2, nullvalue::Real=NaN)
+    where {S <: Real}
+
     if isa(seed, Int)
         srand(seed)
     elseif seed
@@ -591,8 +603,8 @@ end
 Compute the standard error of the location-estimator function `est`
 using a bootstrap calculation. The default estimator is `median`.
 """
-function bootstrapse{S <: Real}(x::AbstractArray{S};
-        nboot::Integer=1000, est::Function=median, seed=2)
+function bootstrapse(x::AbstractArray{S};
+        nboot::Integer=1000, est::Function=median, seed=2) where {S <: Real}
     if isa(seed, Int)
         srand(seed)
     elseif seed
@@ -614,14 +626,14 @@ Returns a modified one-step M-estimator of location (MOM), which is the unweight
 mean of all values not more than (bend times the `mad(x)`) away from the data
 median.
 """
-function mom{S <: Real}(x::AbstractArray{S}; bend::Real=2.24)
+function mom(x::AbstractArray{S}; bend::Real=2.24) where {S <: Real}
     mom!(copy(x), bend=bend)
 end
 
 """`mom!(x)`
 
 Like `mom`, but will sort the input vector."""
-function mom!{S <: Real}(x::AbstractArray{S}; bend::Real=2.24)
+function mom!(x::AbstractArray{S}; bend::Real=2.24) where {S <: Real}
     const n = length(x)
     med = median!(x)
     MAD = mad(x)
@@ -634,8 +646,8 @@ end
 
 Compute a bootstrap, (1-α) confidence interval for the MOM-estimator of location based on Huber's ψ.
 The default number of bootstrap resamplings is nboot=2000."""
-function momci{S <: Real}(x::AbstractArray{S}; bend::Real=2.24, alpha::Real=0.05,
-    nboot::Integer=2000, seed=2, nullvalue::Real=NaN)
+function momci(x::AbstractArray{S}; bend::Real=2.24, alpha::Real=0.05,
+    nboot::Integer=2000, seed=2, nullvalue::Real=NaN) where {S <: Real}
     estimator(z) = mom!(z, bend=bend)
     bootstrapci(copy(x), est=estimator, alpha=alpha, nboot=nboot, seed=seed, nullvalue=nullvalue)
 end
@@ -669,8 +681,8 @@ If `win` is true, then use 10% Winsorizing. If `win` is false, no Winsorizing is
 
 The p-value is for the hypothesis that trimmed mean equals `nullvalue`.
 """
-function trimpb{S <: Real}(x::AbstractArray{S}; tr::Real=0.2, alpha::Real=0.05, nboot::Integer=2000,
-                win=false, nullvalue::Real=0.0, seed=2)
+function trimpb(x::AbstractArray{S}; tr::Real=0.2, alpha::Real=0.05, nboot::Integer=2000,
+                win=false, nullvalue::Real=0.0, seed=2) where {S <: Real}
     if isa(win, Bool) && win
         win = 0.1
     end
@@ -692,7 +704,7 @@ Compute a (1-α) confidence interval for Pearson's correlation coefficient.
 This function uses an adjusted percentile bootstrap method that
 gives good results when the error term is heteroscedastic.
 """
-function pcorb{S <: Real, T <: Real}(x::AbstractArray{S}, y::AbstractArray{T}; seed=2)
+function pcorb(x::AbstractArray{S}, y::AbstractArray{T}; seed=2) where {S <: Real, T <: Real}
    if isa(seed, Bool)
         seed && srand(2)
     else
@@ -736,8 +748,8 @@ A (1-α) confidence interval for the difference of trimmed mean of `x` minus
 the trimmed mean of `y` is computed and returned in `yuend.ci`.
 The significance level is returned in `yuend.siglevel`.
 """
-function yuend{S <: Real, T <: Real}(x::AbstractArray{S}, y::AbstractArray{T};
-        tr::Real=0.2, alpha::Real=0.05, method::Bool=true)
+function yuend(x::AbstractArray{S}, y::AbstractArray{T};
+        tr::Real=0.2, alpha::Real=0.05, method::Bool=true) where {S <: Real, T <: Real}
     const n = length(x)
     if n != length(y)
         error("`x` and `y` must agree in length")
@@ -770,7 +782,7 @@ function yuend{S <: Real, T <: Real}(x::AbstractArray{S}, y::AbstractArray{T};
     output
 end
 
-function pbos{S <: Real}(x::AbstractArray{S}; beta::Real=0.2)
+function pbos(x::AbstractArray{S}; beta::Real=0.2) where {S <: Real}
     temp    = sort( abs.( x - median(x) ))
     nval    = length( x )
     omhatid::Integer = floor( (1 - beta)*nval )
@@ -786,7 +798,7 @@ end
 
 #Compute the percentage bend correlation between x and y
 #beta is the bending constant for omega sub N.
-function pbcor{S <: Real, T <: Real}(x::AbstractArray{S}, y::AbstractArray{T}; beta::Real=0.2)
+function pbcor(x::AbstractArray{S}, y::AbstractArray{T}; beta::Real=0.2) where {S <: Real, T <: Real}
     nval = length(x)
     if length(y) != nval
         error("x and y do not agree in length.")
