@@ -4,6 +4,7 @@ module RobustStats
 
 using Compat
 using DataFrames
+using Printf
 using Rmath
 using StatsBase
 import Base.show
