@@ -42,7 +42,7 @@ fraction `tr` of the data) are replaced by the lowest or highest non-extreme
 value, as appropriate. The trimming fraction defaults to `tr=0.2`.
 """
 function winval(x::AbstractArray{S}; tr::Real=0.2) where {S <: Real}
-    const n = length(x)
+    n = length(x)
     xcopy   = sort(x)
     ibot    = floor(Int64, tr*n)+1
     itop    = n-ibot+1
@@ -152,7 +152,7 @@ robustness.
 This requires `0 <= beta <= 0.5`. The trimming fraction defaults to `beta=0.2`.
 """
 function pbvar(x::AbstractArray{S}; beta::Real=0.2) where {S <: Real}
-    const n = length(x)
+    n = length(x)
     med = median(x)
     absdev = abs.(x-med)
     sort!(absdev)
@@ -186,7 +186,7 @@ robustness.
 This requires `0 <= beta <= 0.5`. The trimming fraction defaults to `beta=0.2`.
 """
 function bivar(x::AbstractArray{S}) where {S <: Real}
-    const n = length(x)
+    n = length(x)
     med = median(x)
     MAD = mad(x)
     q = Rmath.qnorm(0.75)
@@ -208,7 +208,7 @@ Return the tau measure of location of real-valued array `x`, a robust, efficient
 estimator.
 """
 function tauloc(x::AbstractArray{S}; cval::Real=4.5) where {S <: Real}
-    const n = length(x)
+    n = length(x)
     med = median(x)
     s = Rmath.qnorm(0.75)*mad(x)
     Wnom = Wden = 0.0
@@ -230,7 +230,7 @@ Return the tau measure of dispersion of real-valued array `x`, a robust, efficie
 estimator.
 """
 function tauvar(x::AbstractArray{S}; cval::Real=3.0) where {S <: Real}
-    const n = length(x)
+    n = length(x)
     s     = Rmath.qnorm(0.75)*mad(x)
     tloc  = tauloc(x)
     W     = 0.0
@@ -251,7 +251,7 @@ Returns an object with vectors `keepid` and `outid` giving the kept/rejected ele
 function outbox(x::AbstractArray{S}; mbox::Bool=false, gval::Real=NaN, method::Bool=true)
     where {S <: Real}
 
-    const n = length(x)
+    n = length(x)
     lower_quartile, upper_quartile = idealf(x)
     IQR = upper_quartile-lower_quartile
     cl = cu = 0.0
@@ -290,7 +290,7 @@ end
 Return the standard error of the median, computed through the method recommended
 by McKean and Sshrader (1984)."""
 function msmedse(x::AbstractArray{S}) where {S <: Real}
-    const n = length(x)
+    n = length(x)
     y = sort(x)
     if duplicated(y)
         warn("Tied values detected. Estimate of standard error might be highly inaccurate, even with n large")
@@ -455,7 +455,7 @@ for the `testmedian`."""
 function sint(x::AbstractArray{S}; alpha::Real=0.05, method::Bool=true)
     where {S <: Real}
 
-    const n = length(x)
+    n = length(x)
     k = Int(Rmath.qbinom(alpha/2.0, n, 0.5))
     gk = Rmath.pbinom(n-k, n, .5) - Rmath.pbinom(k-1, n, .5)
     if gk < (1 - alpha)
@@ -575,7 +575,7 @@ function bootstrapci(x::AbstractArray{S}; est::Function=onestep,
     elseif seed
         srand(2)
     end
-    const n = length(x)
+    n = length(x)
     bvec = zeros(nboot)
     for i = 1:nboot
         randid=rand(1:n, n)
@@ -610,7 +610,7 @@ function bootstrapse(x::AbstractArray{S};
     elseif seed
         srand(2)
     end
-    const n = length(x)
+    n = length(x)
     bvec = zeros(nboot)
     for i = 1:nboot
         randid=rand(1:n, n)
@@ -634,7 +634,7 @@ end
 
 Like `mom`, but will sort the input vector."""
 function mom!(x::AbstractArray{S}; bend::Real=2.24) where {S <: Real}
-    const n = length(x)
+    n = length(x)
     med = median!(x)
     MAD = mad(x)
     not_extreme = abs.(x-med) .<= bend*MAD
@@ -710,7 +710,7 @@ function pcorb(x::AbstractArray{S}, y::AbstractArray{T}; seed=2) where {S <: Rea
     else
         srand(seed)
     end
-    const n = length(x)
+    n = length(x)
     # Wow. Every number in this function is totally magic.
     bvec=zeros(Float64, 599)
     for i=1:599
@@ -750,7 +750,7 @@ The significance level is returned in `yuend.siglevel`.
 """
 function yuend(x::AbstractArray{S}, y::AbstractArray{T};
         tr::Real=0.2, alpha::Real=0.05, method::Bool=true) where {S <: Real, T <: Real}
-    const n = length(x)
+    n = length(x)
     if n != length(y)
         error("`x` and `y` must agree in length")
     end
