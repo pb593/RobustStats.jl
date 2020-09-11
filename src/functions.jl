@@ -81,8 +81,11 @@ Compute the Winsorized covariance between `x` and `y`.
 
 See `winval` for what Winsorizing (clipping) signifies.
 """
-function wincov(x::AbstractArray{S}, y::AbstractArray{T}; tr::Real=0.2)
-    where {S <: Real, T <: Real}
+function wincov(
+    x::AbstractArray{S},
+    y::AbstractArray{T};
+    tr::Real=0.2
+) where {S <: Real, T <: Real}
 
     xvec = winval(x, tr=tr)
     yvec = winval(y, tr=tr)
@@ -106,8 +109,13 @@ Compute a (1-α) confidence interval for the trimmed mean.
 
 Returns a `RobustStats.testOutput` object.
 """
-function trimci(x::AbstractArray{S}; tr::Real=0.2, alpha::Real=0.05, nullvalue::Real=0, method=true)
-    where {S <: Real}
+function trimci(
+    x::AbstractArray{S};
+    tr::Real=0.2,
+    alpha::Real=0.05,
+    nullvalue::Real=0,
+    method=true
+) where {S <: Real}
 
     se  = trimse(x, tr=tr)
     n   = length(x)
@@ -248,8 +256,12 @@ Use a modified boxplot rule based on the ideal fourths (`idealf`). When the name
 Returns an object with vectors `keepid` and `outid` giving the kept/rejected element numbers,
 `nout` (the number of rejected elements), and `outval`, an array of the outlier values.
 """
-function outbox(x::AbstractArray{S}; mbox::Bool=false, gval::Real=NaN, method::Bool=true)
-    where {S <: Real}
+function outbox(
+    x::AbstractArray{S};
+    mbox::Bool=false,
+    gval::Real=NaN,
+    method::Bool=true
+) where {S <: Real}
 
     n = length(x)
     lower_quartile, upper_quartile = idealf(x)
@@ -452,8 +464,11 @@ end
 Compute the (1-α) confidence interval for the median. In the second form,
 use the Hettmansperger and Sheather interpolation method to estimate a p-value
 for the `testmedian`."""
-function sint(x::AbstractArray{S}; alpha::Real=0.05, method::Bool=true)
-    where {S <: Real}
+function sint(
+    x::AbstractArray{S};
+    alpha::Real=0.05,
+    method::Bool=true
+) where {S <: Real}
 
     n = length(x)
     k = Int(Rmath.qbinom(alpha/2.0, n, 0.5))
@@ -488,8 +503,7 @@ end
 
 
 function sint(x::AbstractArray{S}, testmedian;
-    alpha::Real=0.05, method::Bool=true)
-    where {S <: Real}
+    alpha::Real=0.05, method::Bool=true) where {S <: Real}
 
     ci = sint(x, alpha=alpha, method=false).ci
     med = median(x)
@@ -567,8 +581,7 @@ using a bootstrap calculation. The default estimator is `onestep`. If `nullvalue
 given, it is the target value used when computing a p-value.
 """
 function bootstrapci(x::AbstractArray{S}; est::Function=onestep,
-    alpha::Real=0.05, nboot::Integer=2000, seed=2, nullvalue::Real=NaN)
-    where {S <: Real}
+    alpha::Real=0.05, nboot::Integer=2000, seed=2, nullvalue::Real=NaN) where {S <: Real}
 
     if isa(seed, Int)
         srand(seed)
