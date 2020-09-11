@@ -1,4 +1,4 @@
-type outOutput
+mutable struct outOutput
     outid
     keepid
     outval
@@ -6,13 +6,13 @@ type outOutput
     method
 end
 
-type binomciOutput
+mutable struct binomciOutput
     p_hat::Number
     confint::Array
     n::Int
 end
 
-type testOutput
+mutable struct testOutput
     method
     h0
     n
