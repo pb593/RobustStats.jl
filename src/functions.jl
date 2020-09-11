@@ -125,7 +125,7 @@ function trimci(
                    estimate+Rmath.qt(1-alpha/2, df)*se]
     statistic   = (estimate-nullvalue)/se
     pval        = 2*(1-Rmath.pt(abs(statistic),df))
-    METHOD      = method ? "(1-α) confidence interval for the trimmed mean\n": nothing
+    METHOD      = method ? "(1-α) confidence interval for the trimmed mean\n" : nothing
     output           = testOutput()
     output.method    = METHOD
     output.df        = df
