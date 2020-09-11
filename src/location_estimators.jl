@@ -1,5 +1,3 @@
-using StatsBase
-
 """`bisquareWM(x, k, center, tol)`
 
 Return the bisquare weighted mean, a location estimator.

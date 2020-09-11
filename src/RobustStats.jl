@@ -6,6 +6,7 @@ using Compat
 using DataFrames
 using Printf
 using Rmath
+using Statistics
 using StatsBase
 import Base.show
 
