@@ -5,7 +5,7 @@ Trimmed mean of real-valued array `x`.
 Find the mean of `x`, omitting the lowest and highest `tr` fraction of the data.
 This requires `0 <= tr <= 0.5`. The amount of trimming defaults to `tr=0.2`.
 """
-function tmean{S <: Real}(x::AbstractArray{S}; tr::Real=0.2)
+function tmean(x::AbstractArray{S}; tr::Real=0.2) where {S <: Real}
     tmean!(copy(x), tr=tr)
 end
 
