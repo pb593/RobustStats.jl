@@ -77,6 +77,6 @@ Return Tukey's trimean, a location estimator, for a data set `x`.
 If (q1,q2,q3) are the quartiles (i.e., the 25%ile, median, and 75 %ile),
 the trimean is (q1+q3)/4 + q2/2. Uses `idealf(x)` for finding quartiles.
 """
-function trimean{T <: Real}(x::AbstractArray{T})
+function trimean(x::AbstractArray{T}) where {T <: Real}
     mean([mean(idealf(x)), median(x)])
 end
